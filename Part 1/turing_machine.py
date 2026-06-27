@@ -1,6 +1,7 @@
 import logging
 from itertools import islice
 
+import logging
 
 class TuringMachine:
     def __init__(self, transitions, start_state='q0', accept_state='qa', reject_state='qr', blank_symbol=''):
@@ -62,20 +63,28 @@ class TuringMachine:
                 raise ValueError(f"Invalid direction: {to_exe[2]}")
             
     def accepts(self, input_, step_limit=100):
-        for action, _ in islice(self.run(input_), step_limit):
-            if action == 'Accept':
-                return True
-            elif action == 'Reject':
-                return False
-            
-        logging.warning("Step limit reached without halting")
-        return None
+        logging.disable(logging.WARNING)
+        try:
+            for action, _ in islice(self.run(input_), step_limit):
+                if action == 'Accept':
+                    return True
+                elif action == 'Reject':
+                    return False
+
+            logging.warning("Step limit reached without halting")
+            return None
+        finally:
+            logging.disable(logging.NOTSET)
 
     def rejects(self, input_, **kwargs):
-        result = self.accepts(input_, **kwargs)
-        if result is None:
-            return None
-        return not result
+        logging.disable(logging.WARNING)
+        try:
+            result = self.accepts(input_, **kwargs)
+            if result is None:
+                return None
+            return not result
+        finally:
+            logging.disable(logging.NOTSET)
 
     def debug(self, input_, step_limit=100, colored=False):
         for i, (action, configuration) in enumerate(islice(self.run(input_), step_limit)):
