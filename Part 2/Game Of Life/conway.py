@@ -115,19 +115,13 @@ class GameOfLife:
         return self.getStates()
 
     def update_grid_fast(self, grid):
-        """
-        TODO: [Part 1e - Fast Convolution]
-        Use scipy.signal.convolve2d (or similar) to compute neighbor weights
-        rapidly for large grids (N > 1024).
-        
-        Args:
-            grid (np.ndarray): The current 2D grid of states.
-            
-        Returns:
-            np.ndarray: The next 2D grid of states.
-        """
-        # Student TODO: Implement fast 2D convolution method
-        pass
+        if self.finite:
+            neighbors = signal.convolve2d(grid, self.neighborhood, mode='same', boundary='fill')
+        else:
+            neighbors = signal.convolve2d(grid, self.neighborhood, mode='same', boundary='wrap')
+        next_grid = np.zeros((self.rows, self.cols), np.uint)
+        next_grid[((grid == 1) & ((neighbors == 2) | (neighbors == 3)))| ((grid == 0) & (neighbors == 3))] = 1
+        return next_grid
 
     def evolve(self):
         if self.fastMode:
