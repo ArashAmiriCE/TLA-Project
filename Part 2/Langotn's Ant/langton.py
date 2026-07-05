@@ -1,67 +1,51 @@
-# -*- coding: utf-8 -*-
-"""
-Langton's Ant Student Template Module.
-"""
 import numpy as np
 
-
 class LangtonsAnt:
-    """
-    TODO: [Part 2 - Langton's Ant]
-    Create the LangtonsAnt class.
-    
-    Instruct students to:
-    1. Implement the core rules:
-       - If on a white square, toggle the color of the square and turn 90 degrees clockwise ('R'), then move forward one unit.
-       - If on a black square, toggle the color of the square and turn 90 degrees counter-clockwise ('L'), then move forward one unit.
-    2. Extend it to handle multi-color states (representing rulesets like RLR, LLRR, LRRRRRLLR, etc.).
-       - A ruleset dictionary maps: {current_color: (next_color, turn_direction)}
-       - Where turn_direction is 'R' or 'L'.
-    3. Ensure wrapping at the boundaries (toroidal grid).
-    """
-
-    def __init__(self, N, ant_position, rules):
-        """
-        Initialize the Langton's Ant simulation.
-        
-        Args:
-            N (int): The grid size (NxN).
-            ant_position (tuple): Starting coordinate of the ant as (r, c).
-            rules (dict): Dictionary defining transition rules.
-                          Format: {current_color: (next_color, turn_direction)}
-        """
-        # Student TODO: Implement initialization
-        pass
+    def __init__(self, N, ant_position=(0,0), rules={0: (1, 'R'), 1: (0, 'L')}):
+        self.N = N
+        self.grid = np.zeros((N, N), np.uint)
+        self.r = ant_position[0]
+        self.c = ant_position[1]
+        self.direction = "U"
+        self.rules = rules
 
     def get_states(self):
-        """
-        Returns the current state grid of the cells.
-        
-        Returns:
-            np.ndarray: The NxN cellular grid.
-        """
-        # Student TODO: Return grid state
-        pass
+        return self.grid
 
     def get_current_position(self):
-        """
-        Returns the ant's current position as a tuple (r, c).
-        
-        Returns:
-            tuple: Current coordinates of the ant.
-        """
-        # Student TODO: Return current position
-        pass
+        return (self.r, self.c)
 
     def step(self):
-        """
-        Perform a single simulation step following the ruleset.
-        """
-        # Student TODO: Implement the ant's movement and cell state updates
-        pass
+        current_color = self.grid[self.r, self.c]
+        self.grid[self.r, self.c] = self.rules[current_color][0]
+        if self.rules[current_color][1] == 'R':
+            match self.direction:
+                case 'R':
+                    self.direction = 'D'
+                    self.r = (self.r + 1) % self.N
+                case 'L':
+                    self.direction = 'U'
+                    self.r = (self.r - 1) % self.N
+                case 'U':
+                    self.direction = 'R'
+                    self.c = (self.c + 1) % self.N
+                case 'D':
+                    self.direction = 'L'
+                    self.c = (self.c - 1) % self.N
+        elif self.rules[current_color][1] == 'L':
+            match self.direction:
+                case 'R':
+                    self.direction = 'U'
+                    self.r = (self.r - 1) % self.N
+                case 'L':
+                    self.direction = 'D'
+                    self.r = (self.r + 1) % self.N
+                case 'U':
+                    self.direction = 'L'
+                    self.c = (self.c - 1) % self.N
+                case 'D':
+                    self.direction = 'R'
+                    self.c = (self.c + 1) % self.N
 
     def update(self):
-        """
-        Alias for step() to support standard animation.
-        """
         self.step()
