@@ -6,22 +6,84 @@ This module defines the classes required for the GoL simulation.
 """
 import numpy as np
 from scipy import signal, ndimage
+import re
+import os
 
 
 def parse_pattern(filepath):
-    """
-    TODO: [Part 1d - RLE/Plaintext Parser]
-    Write a parser for Run Length Encoded (RLE) or Plaintext (.cells) patterns
-    so grids larger than 20x20 can be loaded.
-    
-    Args:
-        filepath (str): Path to the pattern file.
-        
-    Returns:
-        tuple: (width, height, list of (r, c) offsets of live cells)
-    """
-    # Student TODO: Implement parser here
-    pass
+    FileFormat = os.path.splitext(filepath)[1].lower()
+    if FileFormat == ".cells":
+        FileLines = []
+        with open(filepath,"r") as File:
+            for line in File:
+                if line.startswith("!"):
+                    continue
+                if not line:
+                    continue
+                line.rstrip("\n")
+                FileLines.append(line)
+        height = len(FileLines)
+        width = 0
+        if FileLines:
+            width = max(len(line) for line in FileLines)
+        result = []
+        for i in range(height):
+            for j in range(len(FileLines[i])):
+                if FileLines[i][j] == "":
+                    continue
+                if FileLines[i][j] == "O":
+                    result.append((i,j))
+        return width, height, result
+    elif FileFormat == ".rle":
+        row = 0
+        col = 0
+        width = 0
+        height = 0
+        result = []
+        with open(filepath, "r") as File:
+            isEnd = False
+            for line in File:
+                if isEnd:
+                    break
+                if line.startswith("#"):
+                    continue
+                line = line.strip()
+                if not line:
+                    continue
+                if line.startswith("x"):
+                    match = re.match(r"x\s*=\s*(\d+)\s*,\s*y\s*=\s*(\d+)", line)
+                    if match:
+                        width = int(match.group(1))
+                        height = int(match.group(2))
+                    continue
+                number = ""
+                for ch in line:
+                    if ch.isdigit():
+                        number += ch
+                        continue
+                    else:
+                        if number:
+                            repeat = int(number)
+                        else:
+                            repeat = 1
+                    number = ""
+                    if ch == "b":
+                        col += repeat
+                        continue
+                    elif ch == "$":
+                        row += repeat
+                        col = 0
+                        continue
+                    elif ch in "oxyz":
+                        for _ in range(repeat):
+                            result.append((row,col))
+                            col += 1
+                    elif ch == "!":
+                        isEnd = True
+                        break
+        return width, height, result
+    else:
+        raise ValueError(f"Unsupported file format: {FileFormat}")
 
 
 class GameOfLife:
