@@ -1,9 +1,3 @@
-"""
-The Game of Life (GoL) module named in honour of John Conway
-
-This module defines the classes required for the GoL simulation.
-
-"""
 import numpy as np
 from scipy import signal, ndimage
 import re
@@ -87,10 +81,6 @@ def parse_pattern(filepath):
 
 
 class GameOfLife:
-    """
-    Object for computing Conway's Game of Life (GoL) cellular machine/automata
-    """
-
     def __init__(self, N=256, finite=False, fastMode=True):
         self.grid = np.zeros((N, N), np.uint)
         self.neighborhood = np.ones((3, 3), np.uint)  # 8 connected kernel
@@ -103,15 +93,9 @@ class GameOfLife:
         self.cols = N  # use for slow implementation of evolve
 
     def getStates(self):
-        """
-        Returns the current states of the cells
-        """
         return self.grid
 
     def getGrid(self):
-        """
-        Same as getStates()
-        """
         return self.getStates()
 
     def update_grid_fast(self, grid):
@@ -173,17 +157,11 @@ class GameOfLife:
 
 
     def insertBlinker(self, index=(0, 0)):
-        '''
-        Insert a blinker oscillator construct at the index position
-        '''
         self.grid[index[0], index[1] + 1] = self.aliveValue
         self.grid[index[0] + 1, index[1] + 1] = self.aliveValue
         self.grid[index[0] + 2, index[1] + 1] = self.aliveValue
 
     def insertGlider(self, index=(0, 0)):
-        '''
-        Insert a glider construct at the index position
-        '''
         self.grid[index[0], index[1] + 1] = self.aliveValue
         self.grid[index[0] + 1, index[1] + 2] = self.aliveValue
         self.grid[index[0] + 2, index[1]] = self.aliveValue
@@ -191,11 +169,6 @@ class GameOfLife:
         self.grid[index[0] + 2, index[1] + 2] = self.aliveValue
 
     def insertGliderGun(self, index=(0, 0)):
-        '''
-        TODO: [Part 1c - Glider Gun Fix]
-        The current glider gun pattern is broken. Leave the broken array in the code 
-        and instruct the student to debug and fix the coordinates so it loops infinitely.
-        '''
         self.grid[index[0] + 1, index[1] + 26] = self.aliveValue
 
         self.grid[index[0] + 2, index[1] + 24] = self.aliveValue
@@ -242,9 +215,6 @@ class GameOfLife:
         self.grid[index[0] + 9, index[1] + 15] = self.aliveValue
 
     def insertFromFile(self, filename, index=((0, 0))):
-        '''
-        Insert cells from pattern file using parse_pattern
-        '''
         width, height, live_cells = parse_pattern(filename)
         for r, c in live_cells:
             target_r = index[0] + r
