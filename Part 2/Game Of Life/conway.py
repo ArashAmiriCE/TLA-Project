@@ -214,6 +214,49 @@ class GameOfLife:
         self.grid[index[0] + 9, index[1] + 14] = self.aliveValue
         self.grid[index[0] + 9, index[1] + 15] = self.aliveValue
 
+    def insertGliderGunSouthWest(self, index=(0, 0)):
+        coords = [
+            (1, 26),
+            (2, 24), (2, 26),
+            (3, 14), (3, 15), (3, 22), (3, 23), (3, 36), (3, 37),
+            (4, 13), (4, 17), (4, 22), (4, 23), (4, 36), (4, 37),
+            (5, 2), (5, 3), (5, 12), (5, 18), (5, 22), (5, 23),
+            (6, 2), (6, 3), (6, 12), (6, 16), (6, 18), (6, 19), (6, 24), (6, 26),
+            (7, 12), (7, 18), (7, 26),
+            (8, 13), (8, 17),
+            (9, 14), (9, 15)
+        ]
+        max_col = 37
+        for r, c in coords:
+            c_new = max_col - c
+            target_r = index[0] + r
+            target_c = index[1] + c_new
+            self.grid[target_r, target_c] = self.aliveValue
+            
+
+    def insertGliderGunNorthhWest(self, index=(0, 0)):
+        coords = [
+            (1, 26),
+            (2, 24), (2, 26),
+            (3, 14), (3, 15), (3, 22), (3, 23), (3, 36), (3, 37),
+            (4, 13), (4, 17), (4, 22), (4, 23), (4, 36), (4, 37),
+            (5, 2), (5, 3), (5, 12), (5, 18), (5, 22), (5, 23),
+            (6, 2), (6, 3), (6, 12), (6, 16), (6, 18), (6, 19), (6, 24), (6, 26),
+            (7, 12), (7, 18), (7, 26),
+            (8, 13), (8, 17),
+            (9, 14), (9, 15)
+        ]
+        max_col = 37
+        max_row = 9
+        for r, c in coords:
+            c_new = max_col - c
+            r_new = max_row - r
+            target_r = index[0] + r_new
+            target_c = index[1] + c_new
+            self.grid[target_r, target_c] = self.aliveValue
+
+        
+
     def insertFromFile(self, filename, index=((0, 0))):
         width, height, live_cells = parse_pattern(filename)
         for r, c in live_cells:
