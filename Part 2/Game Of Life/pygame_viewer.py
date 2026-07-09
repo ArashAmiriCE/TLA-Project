@@ -5,15 +5,6 @@ import pygame
 
 
 def grid_to_surface(grid, cell_scale=1, alive_color=(255, 255, 255), dead_color=(0, 0, 0), viewport=None):
-    """Convert a Game of Life grid into a pygame surface.
-
-    Args:
-        grid: 2D numpy array containing 0/1 cell states.
-        cell_scale: Integer zoom factor for each cell.
-        alive_color: RGB color used for live cells.
-        dead_color: RGB color used for dead cells.
-        viewport: Optional (row_start, row_end, col_start, col_end) crop.
-    """
     cells = np.swapaxes(grid, 0, 1)
 
     if viewport is not None:
@@ -23,6 +14,12 @@ def grid_to_surface(grid, cell_scale=1, alive_color=(255, 255, 255), dead_color=
     rgb = np.empty((cells.shape[0], cells.shape[1], 3), dtype=np.uint8)
     rgb[cells > 0] = alive_color
     rgb[cells == 0] = dead_color
+    # for x in (12, 13):
+    #     for y in (15,16):
+    #         if cells[x, y] == 0:
+    #             rgb[x, y] = (0,0,255)
+    #         else:
+    #             rgb[x,y] = (255,0,0)
 
     surface = pygame.surfarray.make_surface(rgb)
     if cell_scale != 1:
@@ -54,6 +51,10 @@ def run_pygame_life(life, cell_scale=1, fps=20, viewport=None, max_frames=None, 
 
         life.evolve()
         cells = life.getStates()
+        # if cells[15:17, 12:14].sum() == 4:
+        #     finished = True
+        # if cells[2:4 , 0:2].sum() > 0:
+        #     finished = True
         surface = grid_to_surface(cells, cell_scale=cell_scale, viewport=viewport)
 
         frame += 1
@@ -61,5 +62,5 @@ def run_pygame_life(life, cell_scale=1, fps=20, viewport=None, max_frames=None, 
             finished = True
 
         clock.tick(fps)
-
+    # print(frame)
     pygame.quit()
